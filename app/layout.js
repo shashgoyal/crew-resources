@@ -13,80 +13,115 @@ export default function RootLayout({ children }) {
           {/* Navigation Bar */}
           <header style={{
             borderBottom: '1px solid var(--border-color)',
-            background: 'rgba(9, 13, 22, 0.85)',
-            backdropFilter: 'blur(12px)',
+            background: 'var(--cream)',
             position: 'sticky',
             top: 0,
             zIndex: 50,
-            padding: '16px 32px'
+            padding: '20px 32px'
           }}>
             <div style={{
-              maxWidth: '1400px',
+              maxWidth: '1200px',
               margin: '0 auto',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between'
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{
-                  width: '38px',
-                  height: '38px',
-                  borderRadius: '10px',
-                  background: 'linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontWeight: 'bold',
-                  fontSize: '18px',
-                  color: 'white',
-                  boxShadow: '0 0 16px rgba(59, 130, 246, 0.4)'
-                }}>
-                  ✈️
-                </div>
-                <div>
-                  <h1 style={{ fontSize: '20px', fontWeight: '700', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
-                    LANDED
-                  </h1>
-                  <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-                    FLIGHT ALERT WEBHOOK & ROSTER ENGINE
-                  </span>
-                </div>
-              </div>
+              <a href="#" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
+                <svg width="26" height="26" viewBox="0 0 32 32" fill="none" style={{ color: 'var(--ink)' }}>
+                  <path
+                    d="M4 20l24-10-6 18-5-8-13-0z"
+                    stroke="currentColor"
+                    strokeWidth="1.4"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <span className="font-display" style={{ fontSize: '24px', lineHeight: 1, color: 'var(--ink)' }}>
+                  Landed
+                </span>
+              </a>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                 <div style={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: '8px',
-                  padding: '6px 14px',
+                  padding: '5px 14px',
                   borderRadius: '9999px',
-                  background: 'rgba(16, 185, 129, 0.1)',
-                  border: '1px solid rgba(16, 185, 129, 0.2)',
-                  fontSize: '12px',
-                  color: '#34d399',
-                  fontFamily: 'var(--font-mono)'
+                  background: 'oklch(0.93 0.06 155)',
+                  border: '1px solid oklch(0.85 0.06 155)',
+                  fontSize: '11px',
+                  color: 'oklch(0.40 0.14 155)',
+                  fontFamily: 'var(--font-mono)',
+                  fontWeight: 500,
+                  letterSpacing: '0.06em',
+                  textTransform: 'uppercase'
                 }}>
-                  <span className="status-pulse" style={{ background: '#34d399' }}></span>
-                  Supabase & Webhook Connected
+                  <span className="status-pulse" style={{ background: 'oklch(0.40 0.14 155)' }}></span>
+                  Supabase Connected
                 </div>
               </div>
             </div>
           </header>
 
           <main style={{ flex: 1, padding: '32px 16px' }}>
-            <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
               {children}
             </div>
           </main>
 
-          <footer style={{
-            borderTop: '1px solid var(--border-color)',
-            padding: '24px 32px',
-            textAlign: 'center',
-            fontSize: '13px',
-            color: 'var(--text-muted)'
-          }}>
-            Landed &copy; 2026 | Powered by Supabase, AeroDataBox Webhooks & IndiGo Crew Parser Engine
+          <footer style={{ borderTop: '1px solid var(--border-color)' }}>
+            <div style={{
+              maxWidth: '1200px',
+              margin: '0 auto',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0'
+            }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '16px',
+                padding: '24px 32px'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <svg width="20" height="20" viewBox="0 0 32 32" fill="none" style={{ color: 'var(--ink)' }}>
+                    <path d="M4 20l24-10-6 18-5-8-13-0z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
+                  </svg>
+                  <span className="font-display" style={{ fontSize: '18px', color: 'var(--ink)' }}>Landed</span>
+                </div>
+                <p style={{ fontSize: '13px', color: 'var(--text-muted)', maxWidth: '400px' }}>
+                  Built for crew. Powered by Supabase, AeroDataBox Webhooks & IndiGo Crew Parser Engine.
+                </p>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '20px',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '10px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.14em',
+                  color: 'var(--text-muted)'
+                }}>
+                  <a href="#" style={{ transition: 'color 0.2s' }}>Privacy</a>
+                  <a href="#" style={{ transition: 'color 0.2s' }}>Terms</a>
+                  <a href="#" style={{ transition: 'color 0.2s' }}>Contact</a>
+                </div>
+              </div>
+              <div style={{ borderTop: '1px solid var(--border-color)' }}>
+                <p style={{
+                  padding: '16px 32px',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '10px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.14em',
+                  color: 'var(--text-muted)'
+                }}>
+                  © {new Date().getFullYear()} Landed · Made at 35,000 ft
+                </p>
+              </div>
+            </div>
           </footer>
         </div>
       </body>

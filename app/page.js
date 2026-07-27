@@ -38,14 +38,14 @@ export default function Dashboard() {
     setCurrentUser(userProfile);
     setProfile(userProfile);
     localStorage.setItem('landed_pilot_profile', JSON.stringify(userProfile));
-    showToast(`👨‍✈️ Welcome back, ${userProfile.full_name}!`);
+    showToast(`Welcome back, ${userProfile.full_name}!`);
   };
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     setCurrentUser(null);
     localStorage.removeItem('landed_pilot_profile');
-    showToast('👋 Signed out successfully.');
+    showToast('Signed out successfully.');
   };
 
   // Fetch initial flights and webhooks
@@ -93,7 +93,7 @@ export default function Dashboard() {
           if (payload.eventType === 'UPDATE') {
             const updated = payload.new;
             setFlights(prev => prev.map(f => f.id === updated.id ? { ...f, ...updated } : f));
-            showToast(`🚀 Flight ${updated.flight_number} status updated to ${updated.status}!`);
+            showToast(`Flight ${updated.flight_number} status updated to ${updated.status}!`);
           } else if (payload.eventType === 'INSERT') {
             setFlights(prev => [payload.new, ...prev]);
           }
@@ -142,10 +142,10 @@ export default function Dashboard() {
 
       const data = await res.json();
       if (data.success) {
-        let msg = `✅ Schedule Updated! `;
+        let msg = `Schedule Updated! `;
         if (data.inserted_flights_count > 0) msg += `${data.inserted_flights_count} new flights added. `;
-        if (data.updated_flights_count > 0) msg += `🔄 ${data.updated_flights_count} existing flights overwritten. `;
-        if (data.removed_stale_count > 0) msg += `🧹 ${data.removed_stale_count} obsolete roster legs cleaned up.`;
+        if (data.updated_flights_count > 0) msg += `${data.updated_flights_count} existing flights overwritten. `;
+        if (data.removed_stale_count > 0) msg += `${data.removed_stale_count} obsolete roster legs cleaned up.`;
 
         showToast(msg);
         if (data.metadata?.full_name) {
@@ -187,7 +187,7 @@ export default function Dashboard() {
 
       const data = await res.json();
       if (data.success) {
-        showToast(`⚡ AeroDataBox Alert triggered for ${flightNum}: ${status}`);
+        showToast(`AeroDataBox Alert triggered for ${flightNum}: ${status}`);
         fetchDashboardData();
       } else {
         alert(`Webhook Error: ${data.error}`);
@@ -222,16 +222,15 @@ export default function Dashboard() {
           position: 'fixed',
           bottom: '24px',
           right: '24px',
-          background: 'rgba(15, 23, 42, 0.95)',
-          border: '1px solid var(--accent-blue)',
-          boxShadow: '0 10px 30px rgba(59, 130, 246, 0.4)',
+          background: 'var(--ink)',
+          border: '1px solid oklch(0.35 0.02 250)',
+          boxShadow: '0 10px 40px rgba(0, 0, 0, 0.15)',
           borderRadius: '12px',
           padding: '14px 24px',
           zIndex: 100,
-          color: 'white',
-          fontWeight: 600,
+          color: 'var(--cream)',
+          fontWeight: 500,
           fontSize: '14px',
-          backdropFilter: 'blur(10px)',
           animation: 'fadeIn 0.3s ease'
         }}>
           {toastMessage}
@@ -239,7 +238,7 @@ export default function Dashboard() {
       )}
 
       {/* Hero Pilot Profile & Statistics */}
-      <div className="glass-panel glow-card" style={{ padding: '24px 32px' }}>
+      <div className="glass-panel glow-card" style={{ padding: '28px 32px' }}>
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
@@ -249,31 +248,33 @@ export default function Dashboard() {
           {/* Profile Details */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
             <div style={{
-              width: '64px',
-              height: '64px',
-              borderRadius: '16px',
-              background: 'linear-gradient(135deg, #2563eb 0%, #0284c7 100%)',
+              width: '56px',
+              height: '56px',
+              borderRadius: '14px',
+              background: 'var(--ink)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '28px',
-              boxShadow: '0 8px 24px rgba(37, 99, 235, 0.4)'
+              fontSize: '24px',
+              color: 'var(--cream)'
             }}>
-              👨‍✈️
+              ✈
             </div>
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <h2 style={{ fontSize: '24px', fontWeight: '700' }} className="title-gradient">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                <h2 className="font-display" style={{ fontSize: '26px', color: 'var(--ink)' }}>
                   {profile.full_name}
                 </h2>
                 <span style={{
-                  padding: '2px 8px',
-                  borderRadius: '6px',
-                  background: 'rgba(59, 130, 246, 0.2)',
-                  color: '#60a5fa',
-                  fontSize: '12px',
-                  fontWeight: 600,
-                  fontFamily: 'var(--font-mono)'
+                  padding: '3px 10px',
+                  borderRadius: '9999px',
+                  border: '1px solid var(--border-color)',
+                  background: 'var(--sand)',
+                  color: 'var(--text-secondary)',
+                  fontSize: '11px',
+                  fontWeight: 500,
+                  fontFamily: 'var(--font-mono)',
+                  letterSpacing: '0.06em'
                 }}>
                   EMP: {profile.staff_id}
                 </span>
@@ -281,52 +282,59 @@ export default function Dashboard() {
                   type="button"
                   onClick={handleSignOut}
                   className="btn-secondary"
-                  style={{ fontSize: '11px', padding: '4px 10px', background: 'rgba(239, 68, 68, 0.15)', borderColor: 'rgba(239, 68, 68, 0.3)', color: '#f87171' }}
+                  style={{
+                    fontSize: '11px',
+                    padding: '4px 12px',
+                    color: 'var(--text-muted)'
+                  }}
                 >
-                  🚪 Sign Out
+                  Sign Out
                 </button>
               </div>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginTop: '4px' }}>
-                Base: <strong style={{ color: 'white' }}>{profile.base_airport}</strong> &bull; Role: <strong style={{ color: 'white' }}>{profile.role}</strong> &bull; Aircraft: <strong style={{ color: 'white' }}>{profile.aircraft_type}</strong>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginTop: '6px' }}>
+                Base: <strong style={{ color: 'var(--ink)' }}>{profile.base_airport}</strong> · Role: <strong style={{ color: 'var(--ink)' }}>{profile.role}</strong> · Aircraft: <strong style={{ color: 'var(--ink)' }}>{profile.aircraft_type}</strong>
               </p>
             </div>
           </div>
 
           {/* Quick Stats Grid */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
-            <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '14px', borderRadius: '12px', textAlign: 'center', border: '1px solid var(--border-color)' }}>
-              <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>TOTAL FLIGHTS</div>
-              <div style={{ fontSize: '22px', fontWeight: '700', color: 'white', marginTop: '4px' }}>{flights.length}</div>
+            <div style={{ background: 'var(--sand)', padding: '14px', borderRadius: '12px', textAlign: 'center', border: '1px solid var(--border-color)' }}>
+              <div style={{ fontSize: '10px', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Total</div>
+              <div className="font-display" style={{ fontSize: '24px', color: 'var(--ink)', marginTop: '4px' }}>{flights.length}</div>
             </div>
-            <div style={{ background: 'rgba(245, 158, 11, 0.08)', padding: '14px', borderRadius: '12px', textAlign: 'center', border: '1px solid rgba(245, 158, 11, 0.2)' }}>
-              <div style={{ fontSize: '11px', color: '#fbbf24', textTransform: 'uppercase' }}>SCHEDULED</div>
-              <div style={{ fontSize: '22px', fontWeight: '700', color: '#fbbf24', marginTop: '4px' }}>{scheduledCount}</div>
+            <div className="status-scheduled" style={{ padding: '14px', borderRadius: '12px', textAlign: 'center' }}>
+              <div style={{ fontSize: '10px', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Scheduled</div>
+              <div className="font-display" style={{ fontSize: '24px', marginTop: '4px' }}>{scheduledCount}</div>
             </div>
-            <div style={{ background: 'rgba(59, 130, 246, 0.08)', padding: '14px', borderRadius: '12px', textAlign: 'center', border: '1px solid rgba(59, 130, 246, 0.2)' }}>
-              <div style={{ fontSize: '11px', color: '#60a5fa', textTransform: 'uppercase' }}>DEPARTED</div>
-              <div style={{ fontSize: '22px', fontWeight: '700', color: '#60a5fa', marginTop: '4px' }}>{departedCount}</div>
+            <div className="status-departed" style={{ padding: '14px', borderRadius: '12px', textAlign: 'center' }}>
+              <div style={{ fontSize: '10px', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Departed</div>
+              <div className="font-display" style={{ fontSize: '24px', marginTop: '4px' }}>{departedCount}</div>
             </div>
-            <div style={{ background: 'rgba(16, 185, 129, 0.08)', padding: '14px', borderRadius: '12px', textAlign: 'center', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
-              <div style={{ fontSize: '11px', color: '#34d399', textTransform: 'uppercase' }}>LANDED</div>
-              <div style={{ fontSize: '22px', fontWeight: '700', color: '#34d399', marginTop: '4px' }}>{landedCount}</div>
+            <div className="status-landed" style={{ padding: '14px', borderRadius: '12px', textAlign: 'center' }}>
+              <div style={{ fontSize: '10px', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Landed</div>
+              <div className="font-display" style={{ fontSize: '24px', marginTop: '4px' }}>{landedCount}</div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* PDF Schedule Uploader & Webhook Quick Action Bar */}
+      {/* PDF Schedule Uploader */}
       <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
           <div>
-            <h3 style={{ fontSize: '18px', fontWeight: '600' }}>📄 IndiGo Personal Crew Schedule Upload</h3>
-            <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '2px' }}>
-              Upload your PDF crew schedule report. System extracts flight legs, duty times & stores in Supabase database.
+            <h3 className="font-display" style={{ fontSize: '22px', color: 'var(--ink)' }}>Upload your roster</h3>
+            <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px' }}>
+              Drag in your IndiGo PDF crew schedule. We parse flight legs, duty times & store in Supabase.
             </p>
           </div>
 
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
             <label className="btn-primary" style={{ cursor: uploading ? 'wait' : 'pointer' }}>
-              {uploading ? 'Parsing PDF & Syncing...' : '📤 Upload PDF Schedule'}
+              {uploading ? 'Parsing PDF & Syncing...' : 'Upload PDF Schedule'}
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
               <input
                 type="file"
                 accept=".pdf"
@@ -342,7 +350,7 @@ export default function Dashboard() {
       {/* Controls Bar: Filters & Search */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
         {/* Status Filter Buttons */}
-        <div style={{ display: 'flex', gap: '8px', background: 'rgba(15, 23, 42, 0.6)', padding: '4px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+        <div style={{ display: 'flex', gap: '4px', background: 'var(--sand)', padding: '4px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
           {['ALL', 'SCHEDULED', 'DEPARTED', 'LANDED', 'DELAYED'].map(st => (
             <button
               key={st}
@@ -351,10 +359,11 @@ export default function Dashboard() {
                 padding: '8px 16px',
                 borderRadius: '8px',
                 border: 'none',
-                background: filterStatus === st ? 'var(--accent-blue)' : 'transparent',
-                color: filterStatus === st ? 'white' : 'var(--text-secondary)',
-                fontWeight: filterStatus === st ? '600' : '500',
+                background: filterStatus === st ? 'var(--ink)' : 'transparent',
+                color: filterStatus === st ? 'var(--cream)' : 'var(--text-secondary)',
+                fontWeight: filterStatus === st ? '500' : '400',
                 fontSize: '13px',
+                fontFamily: 'var(--font-sans)',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease'
               }}
@@ -368,33 +377,34 @@ export default function Dashboard() {
         <div style={{ position: 'relative', width: '320px' }}>
           <input
             type="text"
-            placeholder="Search Flight #, Airport (DEL, JAI, MAA), Date..."
+            placeholder="Search Flight #, Airport, Date..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             style={{
               width: '100%',
               padding: '10px 16px',
               borderRadius: '10px',
-              background: 'rgba(18, 25, 41, 0.8)',
+              background: 'var(--cream)',
               border: '1px solid var(--border-color)',
-              color: 'white',
+              color: 'var(--ink)',
               fontSize: '14px',
+              fontFamily: 'var(--font-sans)',
               outline: 'none'
             }}
           />
         </div>
       </div>
 
-      {/* Flights & Webhook Trigger Grid */}
+      {/* Flights Grid */}
       {loading ? (
         <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--text-muted)' }}>
-          <div className="status-pulse" style={{ margin: '0 auto 16px auto', width: '16px', height: '16px' }}></div>
+          <div className="status-pulse" style={{ margin: '0 auto 16px auto', width: '12px', height: '12px', color: 'var(--ember)' }}></div>
           Loading flights & live statuses from Supabase...
         </div>
       ) : filteredFlights.length === 0 ? (
         <div className="glass-panel" style={{ padding: '60px', textAlign: 'center', color: 'var(--text-muted)' }}>
-          <div style={{ fontSize: '48px', marginBottom: '12px' }}>✈️</div>
-          <h3>No Flights Found</h3>
+          <div style={{ fontSize: '48px', marginBottom: '12px' }}>✈</div>
+          <h3 className="font-display" style={{ fontSize: '24px', color: 'var(--ink)' }}>No Flights Found</h3>
           <p style={{ marginTop: '8px', fontSize: '14px' }}>
             Upload an IndiGo Crew Schedule PDF report to populate flight legs in your Supabase database.
           </p>
@@ -406,10 +416,10 @@ export default function Dashboard() {
               {/* Flight Header */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ fontSize: '18px', fontWeight: '700', letterSpacing: '-0.01em' }}>
+                  <span className="font-display" style={{ fontSize: '20px', color: 'var(--ink)' }}>
                     {flight.flight_number}
                   </span>
-                  <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                  <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', letterSpacing: '0.06em' }}>
                     [{flight.aircraft_type || '320'}]
                   </span>
                 </div>
@@ -421,56 +431,66 @@ export default function Dashboard() {
               </div>
 
               {/* Date */}
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-                📅 {flight.flight_date}
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', letterSpacing: '0.06em' }}>
+                {flight.flight_date}
               </div>
 
               {/* Route & Times */}
               <div style={{
-                background: 'rgba(255, 255, 255, 0.03)',
-                padding: '12px 16px',
-                borderRadius: '10px',
+                background: 'var(--sand)',
+                padding: '14px 16px',
+                borderRadius: '12px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between'
               }}>
                 {/* Dep */}
                 <div style={{ textAlign: 'left' }}>
-                  <div style={{ fontSize: '20px', fontWeight: '700', color: 'white' }}>{flight.dep_airport}</div>
-                  <div style={{ fontSize: '12px', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>
+                  <div className="font-display" style={{ fontSize: '22px', color: 'var(--ink)' }}>{flight.dep_airport}</div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
                     STD: {flight.std}
                   </div>
                 </div>
 
-                {/* Vector Arrow */}
-                <div style={{ textAlign: 'center', color: 'var(--accent-cyan)' }}>
-                  <div style={{ fontSize: '14px' }}>✈️ ➔</div>
+                {/* Route arrow */}
+                <div style={{ textAlign: 'center', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span style={{ display: 'inline-block', height: '1px', width: '24px', background: 'var(--border-color)' }} />
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style={{ color: 'var(--ember)' }}>
+                    <path d="M2 12l20-8-6 18-4-7-10-3z" stroke="currentColor" strokeWidth="1.5"/>
+                  </svg>
+                  <span style={{ display: 'inline-block', height: '1px', width: '24px', background: 'var(--border-color)' }} />
                 </div>
 
                 {/* Arr */}
                 <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: '20px', fontWeight: '700', color: 'white' }}>{flight.arr_airport}</div>
-                  <div style={{ fontSize: '12px', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>
+                  <div className="font-display" style={{ fontSize: '22px', color: 'var(--ink)' }}>{flight.arr_airport}</div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
                     STA: {flight.sta}
                   </div>
                 </div>
               </div>
 
-              {/* AeroDataBox Alert Simulator Actions */}
+              {/* AeroDataBox Webhook Actions */}
               <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '12px', display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
                 <button
                   onClick={() => triggerAeroDataBoxWebhook(flight.flight_number, 'DEPARTED')}
                   className="btn-secondary"
-                  style={{ fontSize: '11px', padding: '6px 12px' }}
+                  style={{ fontSize: '11px', padding: '6px 14px' }}
                 >
-                  🛫 Webhook: Departed
+                  Departed
                 </button>
                 <button
                   onClick={() => triggerAeroDataBoxWebhook(flight.flight_number, 'LANDED')}
                   className="btn-secondary"
-                  style={{ fontSize: '11px', padding: '6px 12px', background: 'rgba(16, 185, 129, 0.15)', borderColor: 'rgba(16, 185, 129, 0.3)', color: '#34d399' }}
+                  style={{
+                    fontSize: '11px',
+                    padding: '6px 14px',
+                    background: 'oklch(0.93 0.06 155)',
+                    borderColor: 'oklch(0.85 0.06 155)',
+                    color: 'oklch(0.40 0.14 155)'
+                  }}
                 >
-                  🛬 Webhook: Landed
+                  Landed
                 </button>
               </div>
             </div>
@@ -482,53 +502,60 @@ export default function Dashboard() {
       <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <h3 style={{ fontSize: '18px', fontWeight: '600' }}>📡 AeroDataBox Webhook Event Stream (Supabase Realtime)</h3>
-            <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '2px' }}>
+            <h3 className="font-display" style={{ fontSize: '22px', color: 'var(--ink)' }}>Webhook Event Stream</h3>
+            <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px' }}>
               Real-time audit log of incoming flight alert webhooks from AeroDataBox API.
             </p>
           </div>
-          <span style={{ fontSize: '12px', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>
-            Events Logged: {webhooks.length}
+          <span style={{
+            fontSize: '11px',
+            fontFamily: 'var(--font-mono)',
+            color: 'var(--text-muted)',
+            letterSpacing: '0.06em',
+            textTransform: 'uppercase'
+          }}>
+            Events: {webhooks.length}
           </span>
         </div>
 
         <div style={{
-          background: '#040711',
+          background: 'var(--ink)',
           borderRadius: '12px',
           padding: '16px',
-          border: '1px solid var(--border-color)',
+          border: '1px solid oklch(0.30 0.02 250)',
           maxHeight: '260px',
           overflowY: 'auto',
           fontFamily: 'var(--font-mono)',
-          fontSize: '12px'
+          fontSize: '12px',
+          color: 'var(--cream)'
         }}>
           {webhooks.length === 0 ? (
-            <div style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '20px 0' }}>
-              No webhook events logged yet. Click "Webhook: Departed" or "Webhook: Landed" above to fire test alerts.
+            <div style={{ color: 'oklch(0.55 0.015 250)', textAlign: 'center', padding: '20px 0' }}>
+              No webhook events logged yet. Click "Departed" or "Landed" above to fire test alerts.
             </div>
           ) : (
             webhooks.map(wh => (
               <div key={wh.id || Math.random()} style={{
                 padding: '8px 0',
-                borderBottom: '1px solid rgba(255,255,255,0.05)',
+                borderBottom: '1px solid oklch(0.28 0.02 250)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between'
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <span style={{ color: 'var(--text-muted)' }}>
+                  <span style={{ color: 'oklch(0.55 0.015 250)' }}>
                     [{new Date(wh.received_at || Date.now()).toLocaleTimeString()}]
                   </span>
-                  <span style={{ color: 'var(--accent-cyan)', fontWeight: 'bold' }}>
+                  <span style={{ color: 'var(--ember)', fontWeight: 'bold' }}>
                     {wh.flight_number}
                   </span>
                   <span style={{
-                    color: wh.status === 'LANDED' ? '#34d399' : wh.status === 'DEPARTED' ? '#60a5fa' : '#fbbf24'
+                    color: wh.status === 'LANDED' ? 'oklch(0.70 0.14 155)' : wh.status === 'DEPARTED' ? 'oklch(0.70 0.06 250)' : 'oklch(0.70 0.12 85)'
                   }}>
                     {wh.status}
                   </span>
                 </div>
-                <span style={{ color: 'var(--text-muted)', fontSize: '11px' }}>
+                <span style={{ color: 'oklch(0.45 0.015 250)', fontSize: '11px' }}>
                   {wh.event_type || 'FlightAlert'}
                 </span>
               </div>

@@ -166,405 +166,486 @@ export default function LandingPage({ onLoginSuccess }) {
     onLoginSuccess(demoProfile);
   };
 
+  const inputStyle = {
+    width: '100%',
+    padding: '12px 14px',
+    borderRadius: '10px',
+    background: 'var(--cream)',
+    border: '1px solid var(--border-color)',
+    color: 'var(--ink)',
+    fontSize: '14px',
+    fontFamily: 'var(--font-sans)',
+    outline: 'none',
+    transition: 'border-color 0.2s ease'
+  };
+
+  const selectStyle = {
+    ...inputStyle,
+    fontSize: '13px',
+    appearance: 'auto'
+  };
+
+  const labelStyle = {
+    display: 'block',
+    fontSize: '11px',
+    fontFamily: 'var(--font-mono)',
+    textTransform: 'uppercase',
+    letterSpacing: '0.1em',
+    color: 'var(--text-muted)',
+    marginBottom: '6px'
+  };
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '48px', paddingBottom: '60px' }}>
-      {/* Hero Section */}
-      <div style={{
-        position: 'relative',
-        borderRadius: '24px',
-        padding: '48px 36px',
-        background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 58, 138, 0.4) 100%)',
-        border: '1px solid rgba(59, 130, 246, 0.25)',
-        boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)',
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-        gap: '40px',
-        alignItems: 'center'
-      }}>
-        {/* Left: Text & Features */}
-        <div>
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '6px 14px',
-            borderRadius: '9999px',
-            background: 'rgba(59, 130, 246, 0.15)',
-            border: '1px solid rgba(59, 130, 246, 0.3)',
-            color: '#60a5fa',
-            fontSize: '12px',
-            fontWeight: 600,
-            marginBottom: '20px'
-          }}>
-            <span className="status-pulse"></span>
-            Aviation Roster & Live Flight Radar Platform
-          </div>
-
-          <h1 style={{ fontSize: '42px', fontWeight: '800', lineHeight: 1.15, letterSpacing: '-0.02em', marginBottom: '16px' }}>
-            Smart Roster Sync & <span className="title-gradient">Live Alert Engine</span>
-          </h1>
-
-          <p style={{ color: 'var(--text-secondary)', fontSize: '16px', lineHeight: 1.6, marginBottom: '28px' }}>
-            Upload your IndiGo PDF schedule reports to parse flight legs in milliseconds. Receive real-time AeroDataBox webhooks and update roster schedules with automatic deduplication & overwrite protection.
-          </p>
-
-          {/* Quick Demo Pilot Login Buttons */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <div style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              ⚡ One-Click Demo Pilot Access:
-            </div>
-            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-              <button
-                type="button"
-                onClick={() => handleDemoLogin('SARTHAK GOYAL', '52147', 'JAI', 'FO', 'ATR')}
-                className="btn-primary"
-                style={{ padding: '12px 20px', borderRadius: '12px', fontSize: '14px' }}
-              >
-                👨‍✈️ Login as FO Sarthak Goyal (#52147)
-              </button>
-              <button
-                type="button"
-                onClick={() => handleDemoLogin('CHAHAT SHARMA', '52143', 'DEL', 'FO', '320')}
-                className="btn-secondary"
-                style={{ padding: '12px 20px', borderRadius: '12px', fontSize: '14px', background: 'rgba(6, 182, 212, 0.15)', borderColor: 'rgba(6, 182, 212, 0.3)', color: '#38bdf8' }}
-              >
-                👩‍✈️ Login as FO Chahat Sharma (#52143)
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Right: Interactive Login / Signup Form Card */}
-        <div className="glass-panel glow-card" style={{ padding: '32px', borderRadius: '20px' }}>
-          {/* Auth Tab Header */}
-          <div style={{
-            display: 'flex',
-            background: 'rgba(15, 23, 42, 0.7)',
-            padding: '4px',
-            borderRadius: '12px',
-            border: '1px solid var(--border-color)',
-            marginBottom: '24px'
-          }}>
-            <button
-              type="button"
-              onClick={() => { setAuthMode('login'); setErrorMessage(''); }}
-              style={{
-                flex: 1,
-                padding: '10px',
-                borderRadius: '8px',
-                border: 'none',
-                background: authMode === 'login' ? 'var(--accent-blue)' : 'transparent',
-                color: authMode === 'login' ? 'white' : 'var(--text-secondary)',
-                fontWeight: 600,
-                fontSize: '14px',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease'
-              }}
-            >
-              🔑 Log In
-            </button>
-            <button
-              type="button"
-              onClick={() => { setAuthMode('signup'); setErrorMessage(''); }}
-              style={{
-                flex: 1,
-                padding: '10px',
-                borderRadius: '8px',
-                border: 'none',
-                background: authMode === 'signup' ? 'var(--accent-blue)' : 'transparent',
-                color: authMode === 'signup' ? 'white' : 'var(--text-secondary)',
-                fontWeight: 600,
-                fontSize: '14px',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease'
-              }}
-            >
-              ✨ Sign Up
-            </button>
-          </div>
-
-          {errorMessage && (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+      {/* ── HERO SECTION ── */}
+      <section style={{ position: 'relative', overflow: 'hidden' }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
+          gap: '48px',
+          alignItems: 'start',
+          paddingBottom: '48px',
+          paddingTop: '16px'
+        }}>
+          {/* Left: Copy */}
+          <div className="animate-fade-up">
             <div style={{
-              background: 'rgba(239, 68, 68, 0.15)',
-              border: '1px solid rgba(239, 68, 68, 0.3)',
-              color: '#f87171',
-              padding: '10px 14px',
-              borderRadius: '8px',
-              fontSize: '13px',
-              marginBottom: '16px'
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              borderRadius: '9999px',
+              border: '1px solid var(--border-color)',
+              background: 'var(--bg-card)',
+              padding: '5px 14px',
+              fontSize: '11px',
+              fontFamily: 'var(--font-mono)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.14em',
+              color: 'var(--text-muted)',
+              marginBottom: '24px'
             }}>
-              {errorMessage}
+              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--ember)' }} />
+              Private beta · for aircrew
             </div>
-          )}
 
-          {authMode === 'login' ? (
-            <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '6px' }}>
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  placeholder="pilot@indigo.in"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '12px 14px',
-                    borderRadius: '10px',
-                    background: 'rgba(18, 25, 41, 0.9)',
-                    border: '1px solid var(--border-color)',
-                    color: 'white',
-                    fontSize: '14px',
-                    outline: 'none'
-                  }}
-                />
+            <h1 className="font-display" style={{
+              fontSize: 'clamp(2.5rem, 6vw, 4.5rem)',
+              lineHeight: 0.98,
+              letterSpacing: '-0.02em',
+              color: 'var(--ink)'
+            }}>
+              Land safely.
+              <br />
+              <span style={{ fontStyle: 'italic', color: 'var(--text-muted)' }}>They already know.</span>
+            </h1>
+
+            <p style={{
+              marginTop: '28px',
+              maxWidth: '520px',
+              fontSize: '17px',
+              lineHeight: 1.65,
+              color: 'var(--text-secondary)'
+            }}>
+              Landed reads your roster and quietly WhatsApps the people who care —
+              the moment your wheels leave the ground, and the moment they touch it again.
+              No apps for them. No texts from you.
+            </p>
+
+            {/* Demo Login Buttons */}
+            <div style={{ marginTop: '32px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <span style={{
+                fontSize: '10px',
+                fontFamily: 'var(--font-mono)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.14em',
+                color: 'var(--text-muted)'
+              }}>
+                Quick demo access
+              </span>
+              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  onClick={() => handleDemoLogin('SARTHAK GOYAL', '52147', 'JAI', 'FO', 'ATR')}
+                  className="btn-primary"
+                  style={{ padding: '12px 24px', fontSize: '14px' }}
+                >
+                  FO Sarthak Goyal
+                  <ArrowIcon />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDemoLogin('CHAHAT SHARMA', '52143', 'DEL', 'FO', '320')}
+                  className="btn-secondary"
+                  style={{ padding: '12px 24px', fontSize: '14px' }}
+                >
+                  FO Chahat Sharma
+                  <ArrowIcon />
+                </button>
               </div>
+            </div>
 
-              <div>
-                <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '6px' }}>
-                  Password
-                </label>
-                <input
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '12px 14px',
-                    borderRadius: '10px',
-                    background: 'rgba(18, 25, 41, 0.9)',
-                    border: '1px solid var(--border-color)',
-                    color: 'white',
-                    fontSize: '14px',
-                    outline: 'none'
-                  }}
-                />
-              </div>
+            {/* Stats */}
+            <div className="hairline" style={{
+              marginTop: '40px',
+              paddingTop: '28px',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: '24px',
+              maxWidth: '420px'
+            }}>
+              <StatBlock k="2 sec" v="to upload a roster" />
+              <StatBlock k="0" v="messages you send" />
+              <StatBlock k="24/7" v="silent tracking" />
+            </div>
+          </div>
 
+          {/* Right: Auth Form Card */}
+          <div className="glass-panel glow-card" style={{ padding: '32px', borderRadius: '20px' }}>
+            {/* Auth Tab Header */}
+            <div style={{
+              display: 'flex',
+              background: 'var(--sand)',
+              padding: '4px',
+              borderRadius: '12px',
+              border: '1px solid var(--border-color)',
+              marginBottom: '24px'
+            }}>
               <button
-                type="submit"
-                className="btn-primary"
-                disabled={loading}
-                style={{ width: '100%', padding: '14px', borderRadius: '12px', marginTop: '8px', fontSize: '15px' }}
+                type="button"
+                onClick={() => { setAuthMode('login'); setErrorMessage(''); }}
+                style={{
+                  flex: 1,
+                  padding: '10px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  background: authMode === 'login' ? 'var(--ink)' : 'transparent',
+                  color: authMode === 'login' ? 'var(--cream)' : 'var(--text-secondary)',
+                  fontWeight: 500,
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  fontFamily: 'var(--font-sans)'
+                }}
               >
-                {loading ? 'Authenticating...' : 'Sign In to Pilot Dashboard ✈️'}
+                Sign In
               </button>
-            </form>
-          ) : (
-            <form onSubmit={handleSignUp} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>
-                  Full Crew Name
-                </label>
-                <input
-                  type="text"
-                  placeholder="GOYAL, SARTHAK JAI"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '10px 12px',
-                    borderRadius: '8px',
-                    background: 'rgba(18, 25, 41, 0.9)',
-                    border: '1px solid var(--border-color)',
-                    color: 'white',
-                    fontSize: '13px',
-                    outline: 'none'
-                  }}
-                />
-              </div>
+              <button
+                type="button"
+                onClick={() => { setAuthMode('signup'); setErrorMessage(''); }}
+                style={{
+                  flex: 1,
+                  padding: '10px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  background: authMode === 'signup' ? 'var(--ink)' : 'transparent',
+                  color: authMode === 'signup' ? 'var(--cream)' : 'var(--text-secondary)',
+                  fontWeight: 500,
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  fontFamily: 'var(--font-sans)'
+                }}
+              >
+                Create Account
+              </button>
+            </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            {errorMessage && (
+              <div style={{
+                background: 'oklch(0.93 0.06 25)',
+                border: '1px solid oklch(0.85 0.06 25)',
+                color: 'oklch(0.50 0.16 25)',
+                padding: '10px 14px',
+                borderRadius: '10px',
+                fontSize: '13px',
+                marginBottom: '16px'
+              }}>
+                {errorMessage}
+              </div>
+            )}
+
+            {authMode === 'login' ? (
+              <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>
-                    Staff Emp ID
-                  </label>
+                  <label style={labelStyle}>Email Address</label>
                   <input
-                    type="text"
-                    placeholder="52147"
-                    value={staffId}
-                    onChange={(e) => setStaffId(e.target.value)}
+                    type="email"
+                    placeholder="pilot@indigo.in"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
-                    style={{
-                      width: '100%',
-                      padding: '10px 12px',
-                      borderRadius: '8px',
-                      background: 'rgba(18, 25, 41, 0.9)',
-                      border: '1px solid var(--border-color)',
-                      color: 'white',
-                      fontSize: '13px',
-                      outline: 'none'
-                    }}
+                    style={inputStyle}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>
-                    Base Airport
-                  </label>
-                  <select
-                    value={baseAirport}
-                    onChange={(e) => setBaseAirport(e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '10px 12px',
-                      borderRadius: '8px',
-                      background: 'rgba(18, 25, 41, 0.9)',
-                      border: '1px solid var(--border-color)',
-                      color: 'white',
-                      fontSize: '13px',
-                      outline: 'none'
-                    }}
-                  >
-                    <option value="DEL">DEL - Delhi</option>
-                    <option value="JAI">JAI - Jaipur</option>
-                    <option value="BOM">BOM - Mumbai</option>
-                    <option value="BLR">BLR - Bengaluru</option>
-                    <option value="MAA">MAA - Chennai</option>
-                  </select>
+                  <label style={labelStyle}>Password</label>
+                  <input
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    style={inputStyle}
+                  />
                 </div>
-              </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <button
+                  type="submit"
+                  className="btn-primary"
+                  disabled={loading}
+                  style={{ width: '100%', justifyContent: 'center', padding: '14px', marginTop: '8px', fontSize: '15px' }}
+                >
+                  {loading ? 'Authenticating...' : 'Sign In'}
+                  {!loading && <ArrowIcon />}
+                </button>
+              </form>
+            ) : (
+              <form onSubmit={handleSignUp} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>
-                    Role / Position
-                  </label>
-                  <select
-                    value={role}
-                    onChange={(e) => setRole(e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '10px 12px',
-                      borderRadius: '8px',
-                      background: 'rgba(18, 25, 41, 0.9)',
-                      border: '1px solid var(--border-color)',
-                      color: 'white',
-                      fontSize: '13px',
-                      outline: 'none'
-                    }}
-                  >
-                    <option value="FO">FO (First Officer)</option>
-                    <option value="PIC">PIC (Captain)</option>
-                    <option value="CC">Cabin Crew</option>
-                  </select>
+                  <label style={labelStyle}>Full Crew Name</label>
+                  <input
+                    type="text"
+                    placeholder="GOYAL, SARTHAK JAI"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    required
+                    style={inputStyle}
+                  />
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div>
+                    <label style={labelStyle}>Staff ID</label>
+                    <input
+                      type="text"
+                      placeholder="52147"
+                      value={staffId}
+                      onChange={(e) => setStaffId(e.target.value)}
+                      required
+                      style={inputStyle}
+                    />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Base Airport</label>
+                    <select value={baseAirport} onChange={(e) => setBaseAirport(e.target.value)} style={selectStyle}>
+                      <option value="DEL">DEL - Delhi</option>
+                      <option value="JAI">JAI - Jaipur</option>
+                      <option value="BOM">BOM - Mumbai</option>
+                      <option value="BLR">BLR - Bengaluru</option>
+                      <option value="MAA">MAA - Chennai</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div>
+                    <label style={labelStyle}>Role</label>
+                    <select value={role} onChange={(e) => setRole(e.target.value)} style={selectStyle}>
+                      <option value="FO">FO (First Officer)</option>
+                      <option value="PIC">PIC (Captain)</option>
+                      <option value="CC">Cabin Crew</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Fleet Type</label>
+                    <select value={aircraftType} onChange={(e) => setAircraftType(e.target.value)} style={selectStyle}>
+                      <option value="320">Airbus A320</option>
+                      <option value="ATR">ATR 72-600</option>
+                      <option value="777">Boeing 777</option>
+                    </select>
+                  </div>
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>
-                    Fleet Type
-                  </label>
-                  <select
-                    value={aircraftType}
-                    onChange={(e) => setAircraftType(e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '10px 12px',
-                      borderRadius: '8px',
-                      background: 'rgba(18, 25, 41, 0.9)',
-                      border: '1px solid var(--border-color)',
-                      color: 'white',
-                      fontSize: '13px',
-                      outline: 'none'
-                    }}
-                  >
-                    <option value="320">Airbus A320</option>
-                    <option value="ATR">ATR 72-600</option>
-                    <option value="777">Boeing 777</option>
-                  </select>
+                  <label style={labelStyle}>Email Address</label>
+                  <input
+                    type="email"
+                    placeholder="sarthak@indigo.in"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    style={inputStyle}
+                  />
                 </div>
-              </div>
 
+                <div>
+                  <label style={labelStyle}>Password</label>
+                  <input
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    style={inputStyle}
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="btn-primary"
+                  disabled={loading}
+                  style={{ width: '100%', justifyContent: 'center', padding: '12px', marginTop: '4px', fontSize: '14px' }}
+                >
+                  {loading ? 'Creating Account...' : 'Create Account'}
+                  {!loading && <ArrowIcon />}
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* ── HERO IMAGE PREVIEW ── */}
+      <section style={{ position: 'relative', marginBottom: '48px' }}>
+        <div className="grain" style={{ position: 'relative', overflow: 'hidden', borderRadius: '16px' }}>
+          <img
+            src="/hero-sky.jpg"
+            alt="View of clouds and an aircraft wing from a passenger window at golden hour"
+            width={1600}
+            height={400}
+            style={{ width: '100%', height: '320px', objectFit: 'cover', display: 'block' }}
+          />
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(to top, rgba(0,0,0,0.3), transparent, transparent)',
+            pointerEvents: 'none'
+          }} />
+          {/* Flight tag overlay */}
+          <div style={{
+            position: 'absolute',
+            left: '20px',
+            top: '20px',
+            borderRadius: '10px',
+            border: '1px solid rgba(255,255,255,0.2)',
+            background: 'rgba(0,0,0,0.3)',
+            backdropFilter: 'blur(12px)',
+            padding: '10px 14px',
+            fontFamily: 'var(--font-mono)',
+            fontSize: '11px',
+            textTransform: 'uppercase',
+            letterSpacing: '0.12em',
+            color: 'rgba(255,255,255,0.9)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--ember)', animation: 'pulse-ring 1.8s infinite' }} />
+              In flight · 6E 2451
+            </div>
+            <div style={{ marginTop: '4px', display: 'flex', alignItems: 'center', gap: '12px', color: 'rgba(255,255,255,0.7)' }}>
+              <span>JAI</span>
+              <span style={{ display: 'inline-block', height: '1px', width: '32px', background: 'rgba(255,255,255,0.4)' }} />
+              <span>DEL</span>
+            </div>
+          </div>
+
+          {/* WhatsApp card overlay */}
+          <div style={{
+            position: 'absolute',
+            bottom: '-12px',
+            right: '24px',
+            width: '260px',
+            transform: 'rotate(-2deg)',
+            borderRadius: '16px',
+            border: '1px solid var(--border-color)',
+            background: 'var(--bg-card)',
+            padding: '16px',
+            boxShadow: '0 20px 60px -20px rgba(30,30,40,0.25)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid var(--border-color)', paddingBottom: '10px' }}>
+              <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#25D366', display: 'grid', placeItems: 'center', color: 'white' }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 3.5A11 11 0 0 0 3.7 17.3L2.5 22l4.8-1.2A11 11 0 1 0 20.5 3.5Zm-8.4 17a9 9 0 0 1-4.6-1.3l-.3-.2-2.9.8.8-2.8-.2-.3a9 9 0 1 1 7.2 3.7Zm5.2-6.7c-.3-.1-1.7-.8-1.9-.9s-.4-.1-.6.1-.7.9-.9 1.1-.3.1-.6 0a7.5 7.5 0 0 1-3.7-3.2c-.3-.5.3-.5.8-1.5.1-.2 0-.3 0-.5s-.6-1.5-.9-2c-.2-.5-.5-.4-.6-.4h-.6a1.2 1.2 0 0 0-.8.4 3.4 3.4 0 0 0-1.1 2.5c0 1.5 1.1 2.9 1.2 3.1s2.1 3.2 5 4.5c1.9.7 2.6.8 3.5.7a3 3 0 0 0 2-1.4 2.5 2.5 0 0 0 .2-1.4c-.1-.1-.3-.2-.6-.3Z"/></svg>
+              </div>
               <div>
-                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  placeholder="sarthak@indigo.in"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '10px 12px',
-                    borderRadius: '8px',
-                    background: 'rgba(18, 25, 41, 0.9)',
-                    border: '1px solid var(--border-color)',
-                    color: 'white',
-                    fontSize: '13px',
-                    outline: 'none'
-                  }}
-                />
+                <p style={{ fontSize: '13px', fontWeight: 500, color: 'var(--ink)' }}>Mum</p>
+                <p style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--text-muted)' }}>via Landed</p>
               </div>
-
-              <div>
-                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>
-                  Password
-                </label>
-                <input
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '10px 12px',
-                    borderRadius: '8px',
-                    background: 'rgba(18, 25, 41, 0.9)',
-                    border: '1px solid var(--border-color)',
-                    color: 'white',
-                    fontSize: '13px',
-                    outline: 'none'
-                  }}
-                />
+            </div>
+            <div style={{ marginTop: '10px' }}>
+              <div style={{ marginLeft: '20px', borderRadius: '14px', borderTopLeftRadius: '4px', background: 'var(--sand)', padding: '10px 12px', fontSize: '13px', color: 'var(--ink)', lineHeight: 1.5 }}>
+                ✈️ Just took off from Jaipur. Landing in Delhi around 08:12 local. — Sarthak
               </div>
-
-              <button
-                type="submit"
-                className="btn-primary"
-                disabled={loading}
-                style={{ width: '100%', padding: '12px', borderRadius: '10px', marginTop: '4px', fontSize: '14px' }}
-              >
-                {loading ? 'Creating Account...' : 'Create Pilot Account & Launch 🚀'}
-              </button>
-            </form>
-          )}
+              <p style={{ paddingLeft: '20px', fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--text-muted)', marginTop: '4px' }}>07:47 · delivered</p>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
 
-      {/* Highlights / Features Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
-        <div className="glass-panel" style={{ padding: '24px' }}>
-          <div style={{ fontSize: '32px', marginBottom: '12px' }}>📄</div>
-          <h3 style={{ fontSize: '18px', fontWeight: '700', marginBottom: '8px' }}>Smart Schedule Parser</h3>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '14px', lineHeight: 1.5 }}>
-            Automated PDF parser trained specifically for IndiGo Schedule Reports. Extracts multi-column leg dates, report/release times, flight numbers, and STD/STA bounds.
-          </p>
+      {/* ── FEATURES GRID ── */}
+      <section style={{ paddingBottom: '48px' }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+          gap: '1px',
+          overflow: 'hidden',
+          borderRadius: '16px',
+          border: '1px solid var(--border-color)',
+          background: 'var(--border-color)'
+        }}>
+          {[
+            { n: '01', t: 'Smart Schedule Parser', d: 'Automated PDF parser trained for IndiGo Schedule Reports. Extracts multi-column leg dates, report/release times, flight numbers, and STD/STA bounds.' },
+            { n: '02', t: 'Auto-Overwrite & Upsert', d: 'Roster updates handled seamlessly. Uploading an updated schedule checks for existing flights and overwrites changes without duplications.' },
+            { n: '03', t: 'AeroDataBox Live Alerts', d: 'Real-time webhook integration receives live departure and landing notifications, updating flight statuses dynamically via Supabase Realtime.' },
+          ].map((item) => (
+            <div key={item.n} style={{
+              background: 'var(--bg-card)',
+              padding: '32px',
+              transition: 'background 0.2s ease'
+            }}>
+              <span style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '11px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.14em',
+                color: 'var(--ember)'
+              }}>
+                {item.n}
+              </span>
+              <h3 className="font-display" style={{
+                marginTop: '24px',
+                fontSize: '26px',
+                lineHeight: 1.15,
+                color: 'var(--ink)'
+              }}>
+                {item.t}
+              </h3>
+              <p style={{
+                marginTop: '12px',
+                fontSize: '14px',
+                lineHeight: 1.6,
+                color: 'var(--text-secondary)'
+              }}>
+                {item.d}
+              </p>
+            </div>
+          ))}
         </div>
+      </section>
+    </div>
+  );
+}
 
-        <div className="glass-panel" style={{ padding: '24px' }}>
-          <div style={{ fontSize: '32px', marginBottom: '12px' }}>🔄</div>
-          <h3 style={{ fontSize: '18px', fontWeight: '700', marginBottom: '8px' }}>Auto-Overwrite & Upsert</h3>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '14px', lineHeight: 1.5 }}>
-            Roster updates are handled seamlessly. Uploading an updated schedule checks for existing pilot flights on that date and overwrites changes without duplications.
-          </p>
-        </div>
+/* ── Helper Components ── */
 
-        <div className="glass-panel" style={{ padding: '24px' }}>
-          <div style={{ fontSize: '32px', marginBottom: '12px' }}>📡</div>
-          <h3 style={{ fontSize: '18px', fontWeight: '700', marginBottom: '8px' }}>AeroDataBox Live Alerts</h3>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '14px', lineHeight: 1.5 }}>
-            Real-time webhook integration receives live departure and landing notifications, updating flight statuses dynamically with Supabase Realtime feeds.
-          </p>
-        </div>
-      </div>
+function ArrowIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+      <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+function StatBlock({ k, v }) {
+  return (
+    <div>
+      <dt className="font-display" style={{ fontSize: '28px', color: 'var(--ink)' }}>{k}</dt>
+      <dd style={{
+        marginTop: '4px',
+        fontSize: '11px',
+        textTransform: 'uppercase',
+        letterSpacing: '0.08em',
+        color: 'var(--text-muted)'
+      }}>{v}</dd>
     </div>
   );
 }
