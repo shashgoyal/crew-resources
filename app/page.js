@@ -21,6 +21,7 @@ export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [webhooks, setWebhooks] = useState([]);
   const [toastMessage, setToastMessage] = useState(null);
+  const [alertSubs, setAlertSubs] = useState({});  // { flightId: { status, adb_subscription_id, ... } }
 
   // Check stored user session or local storage
   useEffect(() => {
@@ -71,6 +72,20 @@ export default function Dashboard() {
       if (whData.success) {
         setWebhooks(whData.webhooks || []);
       }
+
+      // Fetch alert subscriptions for this user
+      const userId = data?.profile?.id;
+      if (userId) {
+        try {
+          const subRes = await fetch(`/api/subscriptions?userId=${userId}`);
+          const subData = await subRes.json();
+          if (subData.success && subData.subscriptions) {
+            const subsMap = {};
+            subData.subscriptions.forEach(s => { subsMap[s.flight_id] = s; });
+            setAlertSubs(subsMap);
+          }
+        } catch (e) {}
+      }
     } catch (err) {
       console.error('Error fetching dashboard data:', err);
     } finally {
@@ -113,9 +128,32 @@ export default function Dashboard() {
       )
       .subscribe();
 
+    // Subscribe to Supabase Realtime updates on alert_subscriptions table
+    const alertSubsChannel = supabase
+      .channel('public:alert_subscriptions')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'alert_subscriptions' },
+        (payload) => {
+          if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
+            const sub = payload.new;
+            setAlertSubs(prev => ({ ...prev, [sub.flight_id]: sub }));
+          } else if (payload.eventType === 'DELETE') {
+            const sub = payload.old;
+            setAlertSubs(prev => {
+              const next = { ...prev };
+              delete next[sub.flight_id];
+              return next;
+            });
+          }
+        }
+      )
+      .subscribe();
+
     return () => {
       supabase.removeChannel(flightsChannel);
       supabase.removeChannel(webhooksChannel);
+      supabase.removeChannel(alertSubsChannel);
     };
   }, [currentUser]);
 
@@ -133,6 +171,9 @@ export default function Dashboard() {
       formData.append('file', file);
       if (currentUser?.staff_id) {
         formData.append('staff_id', currentUser.staff_id);
+      }
+      if (currentUser?.email) {
+        formData.append('email', currentUser.email);
       }
 
       const res = await fetch('/api/upload-schedule', {
@@ -194,6 +235,45 @@ export default function Dashboard() {
       }
     } catch (err) {
       alert(`Webhook Trigger Error: ${err.message}`);
+    }
+  };
+
+  // Toggle flight alert subscription
+  const handleToggleAlert = async (flightId) => {
+    const userId = profile?.id;
+    if (!userId) {
+      showToast('Profile not loaded yet. Please wait.');
+      return;
+    }
+
+    const isCurrentlyTracked = !!alertSubs[flightId];
+    const enable = !isCurrentlyTracked;
+
+    try {
+      const res = await fetch('/api/subscriptions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ flightId, userId, enable })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        if (enable) {
+          setAlertSubs(prev => ({ ...prev, [flightId]: data.subscription }));
+          showToast('Flight tracking enabled — will subscribe before departure.');
+        } else {
+          setAlertSubs(prev => {
+            const next = { ...prev };
+            delete next[flightId];
+            return next;
+          });
+          showToast('Flight tracking disabled.');
+        }
+      } else {
+        showToast(`Error: ${data.error}`);
+      }
+    } catch (err) {
+      showToast(`Toggle failed: ${err.message}`);
     }
   };
 
@@ -411,7 +491,12 @@ export default function Dashboard() {
         </div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '16px' }}>
-          {filteredFlights.map(flight => (
+          {filteredFlights.map(flight => {
+            const sub = alertSubs[flight.id];
+            const isTracked = !!sub;
+            const subStatus = sub?.status; // pending | active | completed | failed
+
+            return (
             <div key={flight.id || `${flight.flight_number}-${flight.flight_date}`} className="glass-panel" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
               {/* Flight Header */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -470,31 +555,80 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {/* AeroDataBox Webhook Actions */}
-              <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '12px', display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+              {/* Track Toggle + Webhook Actions */}
+              <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '12px', display: 'flex', gap: '8px', justifyContent: 'space-between', alignItems: 'center' }}>
+                {/* Track Toggle */}
                 <button
-                  onClick={() => triggerAeroDataBoxWebhook(flight.flight_number, 'DEPARTED')}
-                  className="btn-secondary"
-                  style={{ fontSize: '11px', padding: '6px 14px' }}
-                >
-                  Departed
-                </button>
-                <button
-                  onClick={() => triggerAeroDataBoxWebhook(flight.flight_number, 'LANDED')}
-                  className="btn-secondary"
+                  onClick={() => flight.id && handleToggleAlert(flight.id)}
+                  disabled={!flight.id}
                   style={{
-                    fontSize: '11px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
                     padding: '6px 14px',
-                    background: 'oklch(0.93 0.06 155)',
-                    borderColor: 'oklch(0.85 0.06 155)',
-                    color: 'oklch(0.40 0.14 155)'
+                    borderRadius: '9999px',
+                    border: isTracked ? '1px solid var(--ember)' : '1px solid var(--border-color)',
+                    background: isTracked ? 'oklch(0.95 0.06 45)' : 'transparent',
+                    color: isTracked ? 'var(--ember)' : 'var(--text-muted)',
+                    fontSize: '11px',
+                    fontWeight: 500,
+                    fontFamily: 'var(--font-mono)',
+                    letterSpacing: '0.06em',
+                    textTransform: 'uppercase',
+                    cursor: flight.id ? 'pointer' : 'not-allowed',
+                    transition: 'all 0.2s ease'
                   }}
                 >
-                  Landed
+                  {/* Radar icon */}
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style={{ opacity: isTracked ? 1 : 0.5 }}>
+                    <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.5" />
+                    <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                    <path d="M12 6a6 6 0 0 1 6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  </svg>
+                  {isTracked ? (
+                    <>
+                      Tracking
+                      {subStatus && subStatus !== 'pending' && (
+                        <span style={{
+                          display: 'inline-block',
+                          width: '5px',
+                          height: '5px',
+                          borderRadius: '50%',
+                          background: subStatus === 'active' ? 'oklch(0.55 0.16 155)' : subStatus === 'failed' ? 'oklch(0.55 0.20 25)' : 'var(--text-muted)',
+                          marginLeft: '2px'
+                        }} />
+                      )}
+                    </>
+                  ) : 'Track'}
                 </button>
+
+                {/* Simulate buttons */}
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button
+                    onClick={() => triggerAeroDataBoxWebhook(flight.flight_number, 'DEPARTED')}
+                    className="btn-secondary"
+                    style={{ fontSize: '11px', padding: '6px 14px' }}
+                  >
+                    Departed
+                  </button>
+                  <button
+                    onClick={() => triggerAeroDataBoxWebhook(flight.flight_number, 'LANDED')}
+                    className="btn-secondary"
+                    style={{
+                      fontSize: '11px',
+                      padding: '6px 14px',
+                      background: 'oklch(0.93 0.06 155)',
+                      borderColor: 'oklch(0.85 0.06 155)',
+                      color: 'oklch(0.40 0.14 155)'
+                    }}
+                  >
+                    Landed
+                  </button>
+                </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
 

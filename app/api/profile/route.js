@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { syncProfileToStore, checkProfileExists } from '@/lib/store';
+import { supabaseServer } from '@/lib/supabase/server';
 
 export async function GET(request) {
   try {
@@ -22,7 +23,32 @@ export async function POST(request) {
       return NextResponse.json({ success: true, ...result });
     }
 
+    if (body.action === 'confirm_email' && body.email) {
+      try {
+        const { data: usersData } = await supabaseServer.auth.admin.listUsers();
+        const targetUser = usersData?.users?.find(u => u.email?.toLowerCase() === body.email.trim().toLowerCase());
+        if (targetUser) {
+          await supabaseServer.auth.admin.updateUserById(targetUser.id, { email_confirm: true });
+          return NextResponse.json({ success: true, confirmed: true });
+        }
+      } catch (e) {
+        console.error("Error auto-confirming email:", e);
+      }
+      return NextResponse.json({ success: true, confirmed: false });
+    }
+
     const profile = await syncProfileToStore(body);
+
+    if (body.email) {
+      try {
+        const { data: usersData } = await supabaseServer.auth.admin.listUsers();
+        const targetUser = usersData?.users?.find(u => u.email?.toLowerCase() === body.email.trim().toLowerCase());
+        if (targetUser && !targetUser.email_confirmed_at) {
+          await supabaseServer.auth.admin.updateUserById(targetUser.id, { email_confirm: true });
+        }
+      } catch (e) {}
+    }
+
     return NextResponse.json({ success: true, profile });
   } catch (err) {
     console.error('Error saving profile:', err);

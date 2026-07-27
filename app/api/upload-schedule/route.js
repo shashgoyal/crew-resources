@@ -14,7 +14,8 @@ export async function POST(request) {
     const buffer = Buffer.from(bytes);
 
     const staffId = formData.get('staff_id');
-    const currentUserProfile = staffId ? { staff_id: staffId } : null;
+    const email = formData.get('email');
+    const currentUserProfile = (staffId || email) ? { staff_id: staffId || undefined, email: email || undefined } : null;
 
     const result = await addScheduleToStore(buffer, file.name, currentUserProfile);
 

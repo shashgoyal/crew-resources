@@ -23,16 +23,42 @@ export default function LandingPage({ onLoginSuccess }) {
 
     try {
       if (email && password) {
-        const { data, error } = await supabase.auth.signInWithPassword({
+        let { data, error } = await supabase.auth.signInWithPassword({
           email: email.trim(),
           password
         });
 
+        if (error && error.message?.toLowerCase().includes('email not confirmed')) {
+          try {
+            await fetch('/api/profile', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'confirm_email', email: email.trim() })
+            });
+            const retryRes = await supabase.auth.signInWithPassword({
+              email: email.trim(),
+              password
+            });
+            if (retryRes.data?.user) {
+              data = retryRes.data;
+              error = retryRes.error;
+            }
+          } catch (e) {}
+        }
+
         if (error) {
-          console.warn("Supabase auth notice:", error.message);
+          setErrorMessage(error.message || 'Invalid login credentials. User does not exist.');
+          setLoading(false);
+          return;
         }
 
         const authUser = data?.user;
+        if (!authUser) {
+          setErrorMessage('User does not exist.');
+          setLoading(false);
+          return;
+        }
+
         const meta = authUser?.user_metadata || {};
 
         let fetchedProfile = null;
@@ -141,31 +167,6 @@ export default function LandingPage({ onLoginSuccess }) {
     }
   };
 
-  // Handle Quick Demo Login (Instant access)
-  const handleDemoLogin = async (pilotName, staff, base, pilotRole, ac) => {
-    const demoInput = {
-      staff_id: staff,
-      full_name: pilotName,
-      base_airport: base,
-      role: pilotRole,
-      aircraft_type: ac,
-      email: `${staff.toLowerCase()}@indigo.in`
-    };
-    let demoProfile = demoInput;
-    try {
-      const res = await fetch('/api/profile', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(demoInput)
-      });
-      const data = await res.json();
-      if (data.success && data.profile) {
-        demoProfile = data.profile;
-      }
-    } catch (e) {}
-    onLoginSuccess(demoProfile);
-  };
-
   const inputStyle = {
     width: '100%',
     padding: '12px 14px',
@@ -250,39 +251,6 @@ export default function LandingPage({ onLoginSuccess }) {
               the moment your wheels leave the ground, and the moment they touch it again.
               No apps for them. No texts from you.
             </p>
-
-            {/* Demo Login Buttons */}
-            <div style={{ marginTop: '32px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <span style={{
-                fontSize: '10px',
-                fontFamily: 'var(--font-mono)',
-                textTransform: 'uppercase',
-                letterSpacing: '0.14em',
-                color: 'var(--text-muted)'
-              }}>
-                Quick demo access
-              </span>
-              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                <button
-                  type="button"
-                  onClick={() => handleDemoLogin('SARTHAK GOYAL', '52147', 'JAI', 'FO', 'ATR')}
-                  className="btn-primary"
-                  style={{ padding: '12px 24px', fontSize: '14px' }}
-                >
-                  FO Sarthak Goyal
-                  <ArrowIcon />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDemoLogin('CHAHAT SHARMA', '52143', 'DEL', 'FO', '320')}
-                  className="btn-secondary"
-                  style={{ padding: '12px 24px', fontSize: '14px' }}
-                >
-                  FO Chahat Sharma
-                  <ArrowIcon />
-                </button>
-              </div>
-            </div>
 
             {/* Stats */}
             <div className="hairline" style={{

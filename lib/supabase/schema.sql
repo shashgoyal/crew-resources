@@ -83,6 +83,23 @@ CREATE TABLE IF NOT EXISTS aerodatabox_webhooks (
   payload JSONB NOT NULL
 );
 
--- Enable Realtime on flights and aerodatabox_webhooks
+-- 7. AeroDataBox Alert Subscriptions (tracking which flights have webhook subscriptions)
+CREATE TABLE IF NOT EXISTS alert_subscriptions (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+  flight_id UUID REFERENCES flights(id) ON DELETE CASCADE,
+  flight_number VARCHAR(20) NOT NULL,
+  flight_date DATE NOT NULL,
+  std TIME NOT NULL,
+  status VARCHAR(20) DEFAULT 'pending',     -- pending | active | completed | failed
+  adb_subscription_id UUID,                 -- AeroDataBox's returned subscription ID
+  webhook_url TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(flight_id)
+);
+
+-- Enable Realtime on flights, webhooks, and alert subscriptions
 ALTER PUBLICATION supabase_realtime ADD TABLE flights;
 ALTER PUBLICATION supabase_realtime ADD TABLE aerodatabox_webhooks;
+ALTER PUBLICATION supabase_realtime ADD TABLE alert_subscriptions;
